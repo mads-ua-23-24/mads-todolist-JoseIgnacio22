@@ -27,3 +27,11 @@ $ java -jar target/mads-todolist-inicial-0.0.1-SNAPSHOT.jar
 Una vez lanzada la aplicación puedes abrir un navegador y probar la página de inicio:
 
 - [http://localhost:8080/login](http://localhost:8080/login)
+
+## Repositorio GitHub
+
+El repositorio de la práctica está en: [GitHub](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22)
+
+## Tablero Trello
+
+El tablero de la práctica está en: [Trello](https://trello.com/b/lr6Fz8mP/todolist-mads)
