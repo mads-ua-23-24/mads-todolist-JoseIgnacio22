@@ -19,7 +19,7 @@ public class RegistradosController {
     ManagerUserSession managerUserSession;
 
     @GetMapping("/registrados")
-    public String about(Model model) {
+    public String registrados(Model model) {
 
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
         List<UsuarioData> usuarios = usuarioService.allUsuarios();
