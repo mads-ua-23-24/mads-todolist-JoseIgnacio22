@@ -48,6 +48,7 @@ public class TareaWebTest {
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
         usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
         usuario = usuarioService.registrar(usuario);
 
         // Y añadimos dos tareas asociadas a ese usuario
@@ -205,14 +206,18 @@ public class TareaWebTest {
     public void getTareasDevuelveBarraMenu() throws Exception {
         Long usuarioId = addUsuarioTareasBD().get("usuarioId");
 
+        UsuarioData usuario = usuarioService.findById(usuarioId);
         // Moqueamos el método usuarioLogeado
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
 
-        this.mockMvc.perform(get("/about"))
+        String url = "/usuarios/" + usuarioId.toString() + "/tareas";
+
+        this.mockMvc.perform(get(url))
                 .andExpect((content().string(allOf(
                         containsString("Tareas"),
                         containsString("Cuenta"),
-                        containsString("Cerrar sesión")
+                        containsString(usuario.getNombre()),
+                        containsString("Cerrar sesión " + usuario.getNombre())
                 ))));
     }
 }

@@ -1,4 +1,4 @@
-package madstodolist;
+package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.UsuarioData;
@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -18,18 +22,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AcercaDeWebTest {
-
-    @Autowired
-    private UsuarioService usuarioService;
+@Sql(scripts = "/clean-db.sql")
+public class RegistradosWebTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
+    // Moqueamos el managerUserSession para poder moquear el usuario logeado
     @MockBean
     private ManagerUserSession managerUserSession;
 
-    private Long addUsuarioBD(){
+    private ArrayList<Long> addUsuariosBD() {
         // Añadimos un usuario a la base de datos
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
@@ -37,38 +43,45 @@ public class AcercaDeWebTest {
         usuario.setNombre("Usuario Ejemplo");
         usuario = usuarioService.registrar(usuario);
 
-        return usuario.getId();
-    }
-    @Test
-    public void getAboutDevuelveNombreAplicacion() throws Exception {
-        // Moqueamos el método usuarioLogeado
-        when(managerUserSession.usuarioLogeado()).thenReturn(null);
+        UsuarioData usuario2 = new UsuarioData();
+        usuario2.setEmail("user2@ua");
+        usuario2.setPassword("123");
+        usuario2.setNombre("Usuario Ejemplo 2");
+        usuario2 = usuarioService.registrar(usuario2);
 
-        this.mockMvc.perform(get("/about"))
-                .andExpect(content().string(containsString("ToDoList")));
+        ArrayList<Long> ids = new ArrayList<>();
+        ids.add(usuario.getId());
+        ids.add(usuario2.getId());
+        return ids;
     }
 
     @Test
-    public void getAboutDevuelveBarraMenuSinLogin() throws Exception {
+    public void listaUsuarios() throws Exception {
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+
+        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
+        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
+
         // Moqueamos el método usuarioLogeado
-        when(managerUserSession.usuarioLogeado()).thenReturn(null);
-        managerUserSession.logout();
-        this.mockMvc.perform(get("/about"))
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        this.mockMvc.perform(get("/registrados"))
                 .andExpect((content().string(allOf(
-                        containsString("Login"),
-                        containsString("Registro")
+                        containsString(usuario.getId().toString()),
+                        containsString(usuario.getEmail()),
+                        containsString(usuario2.getId().toString()),
+                        containsString(usuario2.getEmail())
                 ))));
     }
 
     @Test
-    public void getAboutDevuelveBarraMenu() throws Exception {
-        // Añadimos un usuario a la base de datos
-        Long usuarioId = addUsuarioBD();
-        UsuarioData usuario = usuarioService.findById(usuarioId);
+    public void getRegistradosDevuelveBarraMenu() throws Exception {
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
         // Moqueamos el método usuarioLogeado
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
 
-        this.mockMvc.perform(get("/about"))
+        this.mockMvc.perform(get("/registrados"))
                 .andExpect((content().string(allOf(
                         containsString("Tareas"),
                         containsString("Cuenta"),
