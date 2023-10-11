@@ -34,6 +34,7 @@ public class AcercaDeWebTest {
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
         usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
         usuario = usuarioService.registrar(usuario);
 
         return usuario.getId();
@@ -63,7 +64,7 @@ public class AcercaDeWebTest {
     public void getAboutDevuelveBarraMenu() throws Exception {
         // Añadimos un usuario a la base de datos
         Long usuarioId = addUsuarioBD();
-
+        UsuarioData usuario = usuarioService.findById(usuarioId);
         // Moqueamos el método usuarioLogeado
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
 
@@ -71,7 +72,8 @@ public class AcercaDeWebTest {
                 .andExpect((content().string(allOf(
                         containsString("Tareas"),
                         containsString("Cuenta"),
-                        containsString("Cerrar sesión")
+                        containsString(usuario.getNombre()),
+                        containsString("Cerrar sesión " + usuario.getNombre())
                 ))));
     }
 }
