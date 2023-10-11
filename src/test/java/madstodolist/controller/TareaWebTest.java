@@ -200,4 +200,19 @@ public class TareaWebTest {
         this.mockMvc.perform(get(urlListado))
                 .andExpect(content().string(containsString("Limpiar cristales coche")));
     }
+
+    @Test
+    public void getTareasDevuelveBarraMenu() throws Exception {
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
+
+        // Moqueamos el método usuarioLogeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        this.mockMvc.perform(get("/about"))
+                .andExpect((content().string(allOf(
+                        containsString("Tareas"),
+                        containsString("Cuenta"),
+                        containsString("Cerrar sesión")
+                ))));
+    }
 }
