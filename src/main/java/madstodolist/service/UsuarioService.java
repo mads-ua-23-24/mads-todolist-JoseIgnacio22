@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
@@ -71,5 +75,19 @@ public class UsuarioService {
         else {
             return modelMapper.map(usuario, UsuarioData.class);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioData> allUsuarios() {
+        logger.debug("Devolviendo todos los usuarios");
+        Iterable <Usuario> usuariosIterados = usuarioRepository.findAll();
+        List<Usuario> usuarios = (List<Usuario>) usuariosIterados;
+        List<UsuarioData> usuariosDATA = usuarios.stream()
+                .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
+                .collect(Collectors.toList());
+
+        // Ordenamos la lista por id de usuario
+        Collections.sort(usuariosDATA, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+        return usuariosDATA;
     }
 }
