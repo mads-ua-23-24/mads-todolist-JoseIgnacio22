@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class LoginController {
@@ -47,6 +48,10 @@ public class LoginController {
 
             managerUserSession.logearUsuario(usuario.getId());
 
+                if (usuario.getAdmin()) {
+                return "redirect:/registrados";
+            }
+
             return "redirect:/usuarios/" + usuario.getId() + "/tareas";
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
@@ -61,6 +66,13 @@ public class LoginController {
     @GetMapping("/registro")
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
+
+        if(!usuarioService.existsAdmin()){
+            model.addAttribute("adminCheckbox", true);
+        } else {
+            model.addAttribute("adminCheckbox", false);
+        }
+
         return "formRegistro";
     }
 
@@ -77,11 +89,19 @@ public class LoginController {
             return "formRegistro";
         }
 
+        // Comprobación de que no se registra un segundo administrador
+        if (usuarioService.existsAdmin() && registroData.getAdmin()){
+            model.addAttribute("registroData", registroData);
+            model.addAttribute("error", "Ya existe un administrador");
+            return "formRegistro";
+        }
+
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail(registroData.getEmail());
         usuario.setPassword(registroData.getPassword());
         usuario.setFechaNacimiento(registroData.getFechaNacimiento());
         usuario.setNombre(registroData.getNombre());
+        usuario.setAdmin(registroData.getAdmin());
 
         usuarioService.registrar(usuario);
         return "redirect:/login";

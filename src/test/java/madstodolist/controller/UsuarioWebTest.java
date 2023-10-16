@@ -1,7 +1,10 @@
 package madstodolist.controller;
 
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,8 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Date;
+
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,6 +38,10 @@ public class UsuarioWebTest {
     // las peticiones a los endpoint.
     @MockBean
     private UsuarioService usuarioService;
+
+    private Matcher<String> doesNotContainString(String s) {
+        return CoreMatchers.not(containsString(s));
+    }
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
@@ -92,5 +103,40 @@ public class UsuarioWebTest {
                         .param("eMail","ana.garcia@gmail.com")
                         .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
+    }
+
+    @Test
+    public void getRegistroAdmin() throws Exception {
+        this.mockMvc.perform(get("/registro"))
+                .andExpect((content().string(allOf(
+                        containsString("Usuario administrador"),
+                        containsString("hidden"),
+                        containsString("checkbox")))));
+    }
+
+    @Test
+    public void postLoginConAdmin() throws Exception {
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(true);
+
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
+                .thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición POST al login pasando los datos
+        // esperados en el mock, la petición devolverá una redirección a la
+        // URL con las tareas del usuario
+
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password", "12345678"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
+
     }
 }

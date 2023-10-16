@@ -52,6 +52,9 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getPassword() == null)
             throw new UsuarioServiceException("El usuario no tiene password");
+        else if (existsAdmin() && usuario.getAdmin()){ // Comprobamos que no haya más de un administrador
+            throw new UsuarioServiceException("Ya existe un administrador registrado");
+        }
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
@@ -89,5 +92,13 @@ public class UsuarioService {
         // Ordenamos la lista por id de usuario
         Collections.sort(usuariosDATA, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
         return usuariosDATA;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean existsAdmin() {
+        logger.debug("Indicando si hay administradores registrados");
+        List<UsuarioData> usuarios = allUsuarios();
+        // Comprobamos que no haya ningún usuario registrado como administrador
+        return usuarios.stream().anyMatch(UsuarioData::getAdmin);
     }
 }
