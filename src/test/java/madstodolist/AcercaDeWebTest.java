@@ -32,7 +32,7 @@ public class AcercaDeWebTest {
     private Long addUsuarioBD(){
         // Añadimos un usuario a la base de datos
         UsuarioData usuario = new UsuarioData();
-        usuario.setEmail("user@ua");
+        usuario.setEmail("user1@ua");
         usuario.setPassword("123");
         usuario.setNombre("Usuario Ejemplo");
         usuario = usuarioService.registrar(usuario);
