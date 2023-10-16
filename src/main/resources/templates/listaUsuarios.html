@@ -28,6 +28,8 @@
                     <td th:text="${usuario.id}"></td>
                     <td th:text="${usuario.email}"></td>
                     <td><a class="btn btn-primary btn-xs" th:href="@{/registrados/{id}(id=${usuario.id})}"/>descripción</a>
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                th:onclick="'put(\'/registrados/' + ${usuario.id} + '\')'">Bloquear/Desbloquear</button>
                     </td>
                 </tr>
                 </tbody>
@@ -37,6 +39,18 @@
 </div>
 
 <div th:replace="fragments::javascript"/>
+
+<!-- Lanzamos una petición PUT por JavaScript para bloquear un usuario -->
+
+<script type="text/javascript">
+    function put(url) {
+        if (confirm('¿Estás seguro/a de que quieres bloquear/desbloquear al usuario?')) {
+            fetch(url, {
+                method: 'PUT'
+            }).then((res) => location.reload());
+        }
+    }
+</script>
 
 </body>
 </html>

@@ -241,4 +241,42 @@ public class UsuarioServiceTest {
             usuarioService.registrar(usuario2);
         });
     }
+
+    @Test
+    public void bloquearUsuario(){
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+
+        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
+        usuario.setEmail("admin@ua");
+        usuario.setAdmin(true);
+        UsuarioData admin = usuarioService.registrar(usuario);
+
+        Assertions.assertThrows(UsuarioServiceException.class, () -> {
+            usuarioService.bloquearUsuario(admin.getId());
+        });
+
+        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
+        usuario2.setEmail("blocked@ua");
+        UsuarioData blocked = usuarioService.registrar(usuario2);
+
+        Assertions.assertDoesNotThrow(() -> {
+            usuarioService.bloquearUsuario(blocked.getId());
+        });
+        Assertions.assertEquals(true, usuarioService.findById(blocked.getId()).getBlocked());
+    }
+
+    @Test
+    public void desbloquearUsuario(){
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+
+        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
+        usuario2.setEmail("blocked@ua");
+        UsuarioData blocked = usuarioService.registrar(usuario2);
+        usuarioService.bloquearUsuario(blocked.getId());
+
+        Assertions.assertDoesNotThrow(() -> {
+            usuarioService.desbloquearUsuario(blocked.getId());
+        });
+        Assertions.assertEquals(false, usuarioService.findById(blocked.getId()).getBlocked());
+    }
 }
