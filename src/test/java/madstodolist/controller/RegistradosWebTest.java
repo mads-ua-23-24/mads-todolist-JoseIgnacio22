@@ -76,6 +76,8 @@ public class RegistradosWebTest {
                         containsString(usuario.getEmail()),
                         containsString(usuario2.getId().toString()),
                         containsString(usuario2.getEmail()),
+                        containsString("Bloquear"),
+                        containsString("Desbloquear"),
                         containsString("descripción")
                 ))));
     }
