@@ -22,6 +22,8 @@
                     <th>Correo electrónico</th>
                     <th>Nombre</th>
                     <th>Fecha de nacimiento</th>
+                    <th>Administrador</th>
+                    <th>Bloqueado</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,6 +32,8 @@
                     <td th:text="${usuario1.email}"></td>
                     <td th:text="${usuario1.nombre}"></td>
                     <td th:text="${usuario1.fechaNacimiento}"></td>
+                    <td th:text="${usuario1.admin}"></td>
+                    <td th:text="${usuario1.blocked}"></td>
                 </tr>
                 </tbody>
             </table>
