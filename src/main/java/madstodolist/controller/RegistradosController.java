@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -19,7 +21,7 @@ public class RegistradosController {
     ManagerUserSession managerUserSession;
 
     @GetMapping("/registrados")
-    public String about(Model model) {
+    public String registrados(Model model) {
 
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
         List<UsuarioData> usuarios = usuarioService.allUsuarios();
@@ -27,5 +29,16 @@ public class RegistradosController {
         model.addAttribute("usuarios", usuarios);
 
         return "listaUsuarios";
+    }
+
+    @GetMapping("/registrados/{id}")
+    public String descripcionUsuario(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
+
+        UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+        UsuarioData usuario1 = usuarioService.findById(idUsuario);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuario1", usuario1);
+
+        return "descripcionUsuario";
     }
 }

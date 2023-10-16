@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +42,14 @@ public class RegistradosWebTest {
         usuario.setEmail("user@ua");
         usuario.setPassword("123");
         usuario.setNombre("Usuario Ejemplo");
+        usuario.setFechaNacimiento(Date.valueOf("1999-01-01"));
         usuario = usuarioService.registrar(usuario);
 
         UsuarioData usuario2 = new UsuarioData();
         usuario2.setEmail("user2@ua");
         usuario2.setPassword("123");
         usuario2.setNombre("Usuario Ejemplo 2");
+        usuario2.setFechaNacimiento(Date.valueOf("2000-02-02"));
         usuario2 = usuarioService.registrar(usuario2);
 
         ArrayList<Long> ids = new ArrayList<>();
@@ -70,7 +73,8 @@ public class RegistradosWebTest {
                         containsString(usuario.getId().toString()),
                         containsString(usuario.getEmail()),
                         containsString(usuario2.getId().toString()),
-                        containsString(usuario2.getEmail())
+                        containsString(usuario2.getEmail()),
+                        containsString("descripción")
                 ))));
     }
 
@@ -87,6 +91,24 @@ public class RegistradosWebTest {
                         containsString("Cuenta"),
                         containsString(usuario.getNombre()),
                         containsString("Cerrar sesión " + usuario.getNombre())
+                ))));
+    }
+
+    @Test
+    public void getDescripcionDeUsuario() throws Exception {
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
+        // Moqueamos el método usuarioLogeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
+
+        this.mockMvc.perform(get("/registrados/" + usuario2.getId()))
+                .andExpect((content().string(allOf(
+                        containsString("Descripción de " + usuario2.getNombre()),
+                        containsString(usuario2.getId().toString()),
+                        containsString(usuario2.getEmail()),
+                        containsString(usuario2.getFechaNacimiento().toString()),
+                        containsString(usuario.getNombre())
                 ))));
     }
 }
