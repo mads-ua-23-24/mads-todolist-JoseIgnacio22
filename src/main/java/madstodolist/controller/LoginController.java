@@ -67,12 +67,10 @@ public class LoginController {
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
 
-        List<UsuarioData> usuarios = usuarioService.allUsuarios();
-        // Comprobamos que no haya ningún usuario registrado como administrador
-        if (usuarios.stream().anyMatch(UsuarioData::getAdmin)) {
-            model.addAttribute("adminCheckbox", false);
-        } else {
+        if(!usuarioService.existsAdmin()){
             model.addAttribute("adminCheckbox", true);
+        } else {
+            model.addAttribute("adminCheckbox", false);
         }
 
         return "formRegistro";
@@ -88,6 +86,13 @@ public class LoginController {
         if (usuarioService.findByEmail(registroData.getEmail()) != null) {
             model.addAttribute("registroData", registroData);
             model.addAttribute("error", "El usuario " + registroData.getEmail() + " ya existe");
+            return "formRegistro";
+        }
+
+        // Comprobación de que no se registra un segundo administrador
+        if (usuarioService.existsAdmin() && registroData.getAdmin()){
+            model.addAttribute("registroData", registroData);
+            model.addAttribute("error", "Ya existe un administrador");
             return "formRegistro";
         }
 

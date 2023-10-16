@@ -139,5 +139,4 @@ public class UsuarioWebTest {
                 .andExpect(redirectedUrl("/registrados"));
 
     }
-
 }

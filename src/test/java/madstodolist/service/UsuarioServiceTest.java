@@ -195,4 +195,50 @@ public class UsuarioServiceTest {
         assertThat(usuario2.getEmail()).isEqualTo(usuarios.get(1).getEmail());
         assertThat(usuario2.getNombre()).isEqualTo(usuarios.get(1).getNombre());
     }
+
+    @Test
+    public void existeAdmin(){
+        // GIVEN
+        // Un usuario en la BD
+
+        Long usuarioId = addUsuarioBD();
+
+        // WHEN
+        // recuperamos un usuario usando su e-mail,
+
+        Boolean existeAdmin = usuarioService.existsAdmin();
+
+        // THEN
+        // el usuario no es admin
+
+        assertThat(existeAdmin).isEqualTo(false);
+
+        UsuarioData usuario = usuarioService.findById(usuarioId);
+        usuario.setEmail("admin@ua");
+        usuario.setAdmin(true);
+        usuarioService.registrar(usuario);
+
+        assertThat(usuarioService.existsAdmin()).isEqualTo(true);
+    }
+
+    @Test
+    public void existeMasDeUnAdmin(){
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+
+        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
+        usuario.setEmail("admin@ua");
+        usuario.setAdmin(true);
+
+        Assertions.assertDoesNotThrow(() -> {
+            usuarioService.registrar(usuario);
+        });
+
+        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
+        usuario2.setEmail("intento2admin@ua");
+        usuario2.setAdmin(true);
+
+        Assertions.assertThrows(UsuarioServiceException.class, () -> {
+            usuarioService.registrar(usuario2);
+        });
+    }
 }
