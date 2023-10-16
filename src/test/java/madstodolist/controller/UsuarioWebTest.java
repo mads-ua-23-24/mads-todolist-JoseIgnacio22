@@ -1,10 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.dto.UsuarioData;
-import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,10 +35,6 @@ public class UsuarioWebTest {
     // las peticiones a los endpoint.
     @MockBean
     private UsuarioService usuarioService;
-
-    private Matcher<String> doesNotContainString(String s) {
-        return CoreMatchers.not(containsString(s));
-    }
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {

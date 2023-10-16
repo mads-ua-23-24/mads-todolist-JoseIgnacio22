@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,6 +44,7 @@ public class RegistradosWebTest {
         usuario.setPassword("123");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setFechaNacimiento(Date.valueOf("1999-01-01"));
+        usuario.setAdmin(true);
         usuario = usuarioService.registrar(usuario);
 
         UsuarioData usuario2 = new UsuarioData();
@@ -110,5 +112,20 @@ public class RegistradosWebTest {
                         containsString(usuario2.getFechaNacimiento().toString()),
                         containsString(usuario.getNombre())
                 ))));
+    }
+
+    @Test
+    public void getUnauthorized() throws Exception {
+        ArrayList<Long> usuarioIds = addUsuariosBD();
+        UsuarioData usuario = usuarioService.findById(usuarioIds.get(1));
+        // Moqueamos el método usuarioLogeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(0));
+
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isUnauthorized());
+
+        this.mockMvc.perform(get("/registrados/" + usuario2.getId()))
+                .andExpect(status().isUnauthorized());
     }
 }
