@@ -72,7 +72,7 @@ public class AcercaDeWebTest {
 
         this.mockMvc.perform(get("/about"))
                 .andExpect((content().string(allOf(
-                        containsString("Tareas"),
+                        containsString("Tareas123"),
                         containsString("Cuenta"),
                         containsString(usuario.getNombre()),
                         containsString("Cerrar sesión " + usuario.getNombre())
