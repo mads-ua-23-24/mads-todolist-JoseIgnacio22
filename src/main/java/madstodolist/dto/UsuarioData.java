@@ -13,8 +13,8 @@ public class UsuarioData {
     private String nombre;
     private String password;
     private Date fechaNacimiento;
-    private Boolean admin = false;
-    private Boolean blocked = false;
+    private boolean admin;
+    private boolean blocked;
 
     // Getters y setters
 

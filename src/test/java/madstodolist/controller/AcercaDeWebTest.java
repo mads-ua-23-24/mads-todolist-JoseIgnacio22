@@ -1,4 +1,4 @@
-package madstodolist;
+package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.UsuarioData;
@@ -48,34 +48,5 @@ public class AcercaDeWebTest {
 
         this.mockMvc.perform(get("/about"))
                 .andExpect(content().string(containsString("ToDoList")));
-    }
-
-    @Test
-    public void getAboutDevuelveBarraMenuSinLogin() throws Exception {
-        // Moqueamos el método usuarioLogeado
-        when(managerUserSession.usuarioLogeado()).thenReturn(null);
-        managerUserSession.logout();
-        this.mockMvc.perform(get("/about"))
-                .andExpect((content().string(allOf(
-                        containsString("Login"),
-                        containsString("Registro")
-                ))));
-    }
-
-    @Test
-    public void getAboutDevuelveBarraMenu() throws Exception {
-        // Añadimos un usuario a la base de datos
-        Long usuarioId = addUsuarioBD();
-        UsuarioData usuario = usuarioService.findById(usuarioId);
-        // Moqueamos el método usuarioLogeado
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
-
-        this.mockMvc.perform(get("/about"))
-                .andExpect((content().string(allOf(
-                        containsString("Tareas"),
-                        containsString("Cuenta"),
-                        containsString(usuario.getNombre()),
-                        containsString("Cerrar sesión " + usuario.getNombre())
-                ))));
     }
 }

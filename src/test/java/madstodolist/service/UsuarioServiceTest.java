@@ -178,25 +178,6 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    public void servicioDevuelveTodosLosUsuarios() {
-        ArrayList<Long> usuarioIds = addUsuariosBD();
-
-        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
-        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
-
-        List<UsuarioData> usuarios = usuarioService.allUsuarios();
-
-        // usuario
-        assertThat(usuario.getId()).isEqualTo(usuarios.get(0).getId());
-        assertThat(usuario.getEmail()).isEqualTo(usuarios.get(0).getEmail());
-        assertThat(usuario.getNombre()).isEqualTo(usuarios.get(0).getNombre());
-        // usuario2
-        assertThat(usuario2.getId()).isEqualTo(usuarios.get(1).getId());
-        assertThat(usuario2.getEmail()).isEqualTo(usuarios.get(1).getEmail());
-        assertThat(usuario2.getNombre()).isEqualTo(usuarios.get(1).getNombre());
-    }
-
-    @Test
     public void existeAdmin(){
         // GIVEN
         // Un usuario en la BD
@@ -206,7 +187,7 @@ public class UsuarioServiceTest {
         // WHEN
         // recuperamos un usuario usando su e-mail,
 
-        Boolean existeAdmin = usuarioService.existsAdmin();
+        Boolean existeAdmin = usuarioService.existeAdmin();
 
         // THEN
         // el usuario no es admin
@@ -218,7 +199,7 @@ public class UsuarioServiceTest {
         usuario.setAdmin(true);
         usuarioService.registrar(usuario);
 
-        assertThat(usuarioService.existsAdmin()).isEqualTo(true);
+        assertThat(usuarioService.existeAdmin()).isEqualTo(true);
     }
 
     @Test
@@ -240,43 +221,5 @@ public class UsuarioServiceTest {
         Assertions.assertThrows(UsuarioServiceException.class, () -> {
             usuarioService.registrar(usuario2);
         });
-    }
-
-    @Test
-    public void bloquearUsuario(){
-        ArrayList<Long> usuarioIds = addUsuariosBD();
-
-        UsuarioData usuario = usuarioService.findById(usuarioIds.get(0));
-        usuario.setEmail("admin@ua");
-        usuario.setAdmin(true);
-        UsuarioData admin = usuarioService.registrar(usuario);
-
-        Assertions.assertThrows(UsuarioServiceException.class, () -> {
-            usuarioService.bloquearUsuario(admin.getId());
-        });
-
-        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
-        usuario2.setEmail("blocked@ua");
-        UsuarioData blocked = usuarioService.registrar(usuario2);
-
-        Assertions.assertDoesNotThrow(() -> {
-            usuarioService.bloquearUsuario(blocked.getId());
-        });
-        Assertions.assertEquals(true, usuarioService.findById(blocked.getId()).getBlocked());
-    }
-
-    @Test
-    public void desbloquearUsuario(){
-        ArrayList<Long> usuarioIds = addUsuariosBD();
-
-        UsuarioData usuario2 = usuarioService.findById(usuarioIds.get(1));
-        usuario2.setEmail("blocked@ua");
-        UsuarioData blocked = usuarioService.registrar(usuario2);
-        usuarioService.bloquearUsuario(blocked.getId());
-
-        Assertions.assertDoesNotThrow(() -> {
-            usuarioService.desbloquearUsuario(blocked.getId());
-        });
-        Assertions.assertEquals(false, usuarioService.findById(blocked.getId()).getBlocked());
     }
 }

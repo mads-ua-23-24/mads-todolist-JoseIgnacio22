@@ -1,8 +1,8 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
+import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.TareaService;
@@ -42,7 +42,7 @@ public class TareaController {
         comprobarUsuarioLogeado(idUsuario);
 
         UsuarioData usuario = usuarioService.findById(idUsuario);
-        model.addAttribute("usuario", usuario);
+        model.addAttribute("logeado", usuario);
         return "formNuevaTarea";
     }
 
@@ -65,7 +65,7 @@ public class TareaController {
 
         UsuarioData usuario = usuarioService.findById(idUsuario);
         List<TareaData> tareas = tareaService.allTareasUsuario(idUsuario);
-        model.addAttribute("usuario", usuario);
+        model.addAttribute("logeado", usuario);
         model.addAttribute("tareas", tareas);
         return "listaTareas";
     }
@@ -81,6 +81,9 @@ public class TareaController {
 
         comprobarUsuarioLogeado(tarea.getUsuarioId());
 
+        UsuarioData usuarioData = usuarioService.findById(tarea.getUsuarioId());
+
+        model.addAttribute("logeado", usuarioData);
         model.addAttribute("tarea", tarea);
         tareaData.setTitulo(tarea.getTitulo());
         return "formEditarTarea";

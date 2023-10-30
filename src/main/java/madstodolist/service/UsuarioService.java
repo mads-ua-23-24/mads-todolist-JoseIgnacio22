@@ -1,8 +1,6 @@
 package madstodolist.service;
 
-import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
-import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
@@ -12,17 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
 
     Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD, USER_BLOCKED}
+    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, USER_BLOCKED, ERROR_PASSWORD}
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -55,9 +50,8 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getPassword() == null)
             throw new UsuarioServiceException("El usuario no tiene password");
-        else if (existsAdmin() && usuario.getAdmin()){ // Comprobamos que no haya más de un administrador
+        else if (existeAdmin() && usuario.getAdmin()) // Comprobamos que no haya más de un administrador
             throw new UsuarioServiceException("Ya existe un administrador registrado");
-        }
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
@@ -84,48 +78,7 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public List<UsuarioData> allUsuarios() {
-        logger.debug("Devolviendo todos los usuarios");
-        Iterable <Usuario> usuariosIterados = usuarioRepository.findAll();
-        List<Usuario> usuarios = (List<Usuario>) usuariosIterados;
-        List<UsuarioData> usuariosDATA = usuarios.stream()
-                .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
-                .collect(Collectors.toList());
-
-        // Ordenamos la lista por id de usuario
-        Collections.sort(usuariosDATA, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-        return usuariosDATA;
-    }
-
-    @Transactional(readOnly = true)
-    public Boolean existsAdmin() {
-        logger.debug("Indicando si hay administradores registrados");
-        List<UsuarioData> usuarios = allUsuarios();
-        // Comprobamos que no haya ningún usuario registrado como administrador
-        return usuarios.stream().anyMatch(UsuarioData::getAdmin);
-    }
-
-    @Transactional
-    public void bloquearUsuario(Long idUsuario) {
-        logger.debug("Bloqueando usuario " + idUsuario);
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
-        if (usuario == null) {
-            throw new UsuarioServiceException("No existe usuario con id " + idUsuario);
-        }else if(usuario.getAdmin()){
-            throw new UsuarioServiceException("No se puede bloquear un administrador");
-        }
-        usuario.setBlocked(true);
-        usuarioRepository.save(usuario);
-    }
-
-    @Transactional
-    public void desbloquearUsuario(Long idUsuario) {
-        logger.debug("Desbloqueando usuario " + idUsuario);
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
-        if (usuario == null) {
-            throw new UsuarioServiceException("No existe usuario con id " + idUsuario);
-        }
-        usuario.setBlocked(false);
-        usuarioRepository.save(usuario);
+    public boolean existeAdmin() {
+        return usuarioRepository.existsByAdminTrue();
     }
 }

@@ -15,7 +15,7 @@ public class RegistroData {
     private String nombre;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date fechaNacimiento;
-    private Boolean admin = false;
+    private boolean admin;
 
     public String getEmail() {
         return eMail;

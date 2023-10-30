@@ -104,7 +104,7 @@ public class UsuarioWebTest {
     public void getRegistroAdmin() throws Exception {
         this.mockMvc.perform(get("/registro"))
                 .andExpect((content().string(allOf(
-                        containsString("Usuario administrador"),
+                        containsString("Admin?"),
                         containsString("hidden"),
                         containsString("checkbox")))));
     }

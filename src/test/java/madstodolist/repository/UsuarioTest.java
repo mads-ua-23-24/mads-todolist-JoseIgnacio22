@@ -171,4 +171,45 @@ public class UsuarioTest {
 
         assertThat(usuarioBD.getNombre()).isEqualTo("Usuario Ejemplo");
     }
+
+
+    @Test
+    @Transactional
+    public void checkAdminField() {
+        // GIVEN
+        // Create a user and set them as an admin
+        Usuario adminUser = new Usuario("admin@ua");
+        adminUser.setNombre("Admin User");
+        adminUser.setAdmin(true);  // set the user as admin
+        usuarioRepository.save(adminUser);
+
+        // WHEN
+        // Retrieve the user
+        Usuario retrievedUser = usuarioRepository.findById(adminUser.getId()).orElse(null);
+
+        // THEN
+        // Check that the retrieved user is an admin
+        assertThat(retrievedUser).isNotNull();
+        assertThat(retrievedUser.getAdmin()).isTrue();
+    }
+
+    @Test
+    @Transactional
+    public void defaultUserIsNotAdmin() {
+        // GIVEN
+        // Create a new user without setting the admin field
+        Usuario newUser = new Usuario("newuser@ua");
+        newUser.setNombre("New User");
+        usuarioRepository.save(newUser);
+
+        // WHEN
+        // Retrieve the user
+        Usuario retrievedUser = usuarioRepository.findById(newUser.getId()).orElse(null);
+
+        // THEN
+        // Check that the retrieved user is not an admin by default
+        assertThat(retrievedUser).isNotNull();
+        assertThat(retrievedUser.getAdmin()).isFalse();
+    }
+
 }

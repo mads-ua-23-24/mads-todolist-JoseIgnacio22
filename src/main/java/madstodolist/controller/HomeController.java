@@ -18,17 +18,12 @@ public class HomeController {
     @Autowired
     ManagerUserSession managerUserSession;
 
-    private Long comprobarUsuarioLogeado() {
-        return managerUserSession.usuarioLogeado();
-    }
     @GetMapping("/about")
     public String about(Model model) {
-        if (comprobarUsuarioLogeado() == null) {
-            model.addAttribute("barra", "menubarSinLogin");
-        }else{
-            model.addAttribute("barra", "menubar");
-            UsuarioData usuario = usuarioService.findById(comprobarUsuarioLogeado());
-            model.addAttribute("usuario", usuario);
+        Long idUsuario = managerUserSession.usuarioLogeado();
+        if (idUsuario != null) {
+            UsuarioData usuario = usuarioService.findById(idUsuario);
+            model.addAttribute("logeado", usuario);
         }
         return "about";
     }

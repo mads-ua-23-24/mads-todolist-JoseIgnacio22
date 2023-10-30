@@ -24,6 +24,9 @@ public class InitDbService {
     // para inicializar la base de datos
     @PostConstruct
     public void initDatabase() {
+
+        // Añadimos un usuario de prueba con dos tareas
+
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setPassword("123");
@@ -34,6 +37,21 @@ public class InitDbService {
 
         Tarea tarea2 = new Tarea(usuario, "Renovar DNI");
         tareaRepository.save(tarea2);
-    }
 
+        // Añadimos un usuario admin
+
+        Usuario admin = new Usuario("admin@ua");
+        admin.setNombre("Usuario Admin");
+        admin.setPassword("123");
+        admin.setAdmin(true);
+        usuarioRepository.save(admin);
+
+        // Añadimos un usuario bloqueado
+
+        Usuario bloqueado = new Usuario("bloqueado@ua");
+        bloqueado.setNombre("Usuario Bloqueado");
+        bloqueado.setPassword("123");
+        bloqueado.setBlocked(true);
+        usuarioRepository.save(bloqueado);
+    }
 }

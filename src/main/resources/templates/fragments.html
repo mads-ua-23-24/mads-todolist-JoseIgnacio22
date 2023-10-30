@@ -7,52 +7,49 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/about">ToDoList</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto" th:if="${logeado != null}">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${logeado.id})}">Tareas</a>
+            </li>
+            <li class="nav-item" th:if="${logeado.admin}">
+                <a class="nav-link" href="/registrados">Registrados</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto" th:if="${logeado != null}">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                   role="button" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="false" th:text="${logeado.nombre}">
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item disabled" href="#">Cuenta</a>
+                    <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto" th:if="${logeado == null}">
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/registro">Registro</a>
+            </li>
+        </ul>
+    </div>
+    </div>
+</nav>
+
 <div th:fragment="javascript">
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
-</div>
-
-<div th:fragment="menubar">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/about">ToDoList</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Tareas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/registrados">Registrados</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${usuario.nombre}">
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Cuenta</a>
-                        <a class="dropdown-item" href="/logout" th:text="'Cerrar sesión ' + ${usuario.nombre}"></a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</div>
-
-<div th:fragment="menubarSinLogin">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/about">ToDoList</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link" href="/login">Login</a>
-                <a class="nav-item nav-link" href="/registro">Registro</a>
-            </div>
-        </div>
-    </nav>
 </div>
 
 </html>
