@@ -13,5 +13,5 @@ jobs:
       # Hacemos un checkout del código del repositorio
       - uses: actions/checkout@v2
       # Y lanzamos los tests
-      - name: Launch tests with Maven
+      - name: Developer tests
         run:  ./mvnw test
