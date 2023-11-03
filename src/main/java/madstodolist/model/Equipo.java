@@ -1,8 +1,19 @@
 package madstodolist.model;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-public class Equipo {
+@Entity
+@Table(name = "equipos")
+public class Equipo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotNull
     private String nombre;
 
@@ -15,6 +26,14 @@ public class Equipo {
         this.nombre = nombre;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -22,4 +41,6 @@ public class Equipo {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+
 }
