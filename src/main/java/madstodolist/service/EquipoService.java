@@ -97,4 +97,14 @@ public class EquipoService {
         if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + idEquipo);
         return equipo.getUsuarios().contains(usuario);
     }
+
+    @Transactional
+    public void eliminarUsuarioDeEquipo(Long id, Long id1) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
+        Usuario usuario = usuarioRepository.findById(id1).orElse(null);
+        if (usuario == null) throw new EquipoServiceException("No existe usuario con id " + id1);
+        if (!equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException("El usuario no pertenece al equipo");
+        equipo.removeUsuario(usuario);
+    }
 }
