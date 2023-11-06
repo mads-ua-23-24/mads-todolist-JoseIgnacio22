@@ -88,4 +88,13 @@ public class EquipoService {
                 .map(equipo -> modelMapper.map(equipo, EquipoData.class))
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public Boolean usuarioPerteneceEquipo(Long idEquipo, Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) throw new EquipoServiceException("No existe usuario con id " + idUsuario);
+        Equipo equipo = equipoRepository.findById(idEquipo).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + idEquipo);
+        return equipo.getUsuarios().contains(usuario);
+    }
 }
