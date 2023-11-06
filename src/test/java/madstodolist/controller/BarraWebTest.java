@@ -192,4 +192,28 @@ public class BarraWebTest {
                         containsString(usuario.getNombre())
                 ))));
     }
+
+    @Test
+    public void barraMenuContieneEquipos() throws Exception {
+        // GIVEN
+        // Añadimos un usuario a la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        Long usuarioId = usuario.getId();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN, THEN
+        String url = "/about";
+
+        this.mockMvc.perform(get(url))
+                .andExpect(content().string(allOf(
+                        containsString("Equipos")
+                )));
+
+
+    }
 }
