@@ -113,4 +113,18 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), 1L))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void crearEquipoExcepciones() {
+        // GIVEN
+        String nombre = null;
+        //Un equipo ya creado
+        equipoService.crearEquipo("Proyecto P1");
+        //WHEN, THEN
+        // Comprobamos las excepciones de crearEquipo
+        assertThatThrownBy(() -> equipoService.crearEquipo(nombre))
+                .isInstanceOf(EquipoServiceException.class);
+        assertThatThrownBy(() -> equipoService.crearEquipo("Proyecto P1"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }

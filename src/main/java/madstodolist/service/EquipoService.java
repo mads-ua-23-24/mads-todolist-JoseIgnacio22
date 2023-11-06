@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,9 +31,19 @@ public class EquipoService {
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
-        Equipo equipo = new Equipo(nombre);
-        equipoRepository.save(equipo);
-        return modelMapper.map(equipo, EquipoData.class);
+        if (nombre == null) {
+            throw new EquipoServiceException("El nombre del equipo no puede ser nulo");
+        }else {
+
+            Optional<Equipo> equipoDB = equipoRepository.findByNombre(nombre);
+            if (equipoDB.isPresent()) {
+                throw new EquipoServiceException("El equipo " + nombre + " ya está creado");
+            } else {
+                Equipo equipo = new Equipo(nombre);
+                equipoRepository.save(equipo);
+                return modelMapper.map(equipo, EquipoData.class);
+            }
+        }
     }
 
     @Transactional(readOnly = true)
