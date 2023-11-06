@@ -21,6 +21,9 @@
             <li class="nav-item" th:if="${logeado.admin}">
                 <a class="nav-link" href="/registrados">Registrados</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/equipos}">Equipos</a>
+            </li>
         </ul>
         <ul class="navbar-nav ml-auto" th:if="${logeado != null}">
             <li class="nav-item dropdown">
