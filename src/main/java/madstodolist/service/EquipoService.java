@@ -31,19 +31,14 @@ public class EquipoService {
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
-        if (nombre == null) {
-            throw new EquipoServiceException("El nombre del equipo no puede ser nulo");
-        }else {
+        if (nombre == null) throw new EquipoServiceException("El nombre del equipo no puede ser nulo");
 
-            Optional<Equipo> equipoDB = equipoRepository.findByNombre(nombre);
-            if (equipoDB.isPresent()) {
-                throw new EquipoServiceException("El equipo " + nombre + " ya está creado");
-            } else {
-                Equipo equipo = new Equipo(nombre);
-                equipoRepository.save(equipo);
-                return modelMapper.map(equipo, EquipoData.class);
-            }
-        }
+        Optional<Equipo> equipoDB = equipoRepository.findByNombre(nombre);
+        if (equipoDB.isPresent()) throw new EquipoServiceException("El equipo " + nombre + " ya está creado");
+
+        Equipo equipo = new Equipo(nombre);
+        equipoRepository.save(equipo);
+        return modelMapper.map(equipo, EquipoData.class);
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +66,7 @@ public class EquipoService {
         if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
         Usuario usuario = usuarioRepository.findById(id1).orElse(null);
         if (usuario == null) throw new EquipoServiceException("No existe usuario con id " + id1);
+        if (equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException("El usuario ya pertenece al equipo");
         equipo.addUsuario(usuario);
     }
 

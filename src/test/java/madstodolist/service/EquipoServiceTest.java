@@ -127,4 +127,24 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.crearEquipo("Proyecto P1"))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void añadirUsuarioAEquipoYaUnidoExcepcion() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        //WHEN
+        // Añadimos el usuario al equipo
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        //THEN
+        // Comprobamos las excepciones de añadirUsuarioAEquipo
+        UsuarioData finalUsuario = usuario;
+        assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), finalUsuario.getId()))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
