@@ -113,4 +113,88 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), 1L))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void crearEquipoExcepciones() {
+        // GIVEN
+        String nombre = null;
+        //Un equipo ya creado
+        equipoService.crearEquipo("Proyecto P1");
+        //WHEN, THEN
+        // Comprobamos las excepciones de crearEquipo
+        assertThatThrownBy(() -> equipoService.crearEquipo(nombre))
+                .isInstanceOf(EquipoServiceException.class);
+        assertThatThrownBy(() -> equipoService.crearEquipo("Proyecto P1"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void añadirUsuarioAEquipoYaUnidoExcepcion() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        //WHEN
+        // Añadimos el usuario al equipo
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        //THEN
+        // Comprobamos las excepciones de añadirUsuarioAEquipo
+        UsuarioData finalUsuario = usuario;
+        assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), finalUsuario.getId()))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void usuarioPerteneceEquipo() {
+        // GIVEN
+        // Un usuario y dos equipos en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        EquipoData equipo1 = equipoService.crearEquipo("Proyecto 2");
+        //WHEN
+        // Añadimos el usuario al equipo
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        //THEN
+        // Comprobamos que el usuario pertenece al equipo
+        assertThat(equipoService.usuarioPerteneceEquipo(equipo.getId(), usuario.getId())).isTrue();
+        // Comprobamos que el usuario no pertenece al segundo equipo
+        assertThat(equipoService.usuarioPerteneceEquipo(equipo1.getId(), usuario.getId())).isFalse();
+        //Comprobamos excepciones
+        assertThatThrownBy(() -> equipoService.usuarioPerteneceEquipo(2L, 2L))
+                .isInstanceOf(EquipoServiceException.class);
+        assertThatThrownBy(() -> equipoService.usuarioPerteneceEquipo(equipo.getId(), 2L))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void eliminarUsuarioDeEquipo() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        //WHEN
+        // Añadimos el usuario al equipo
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+        // Eliminamos el usuario del equipo
+        equipoService.eliminarUsuarioDeEquipo(equipo.getId(), usuario.getId());
+        //THEN
+        // Comprobamos que el usuario no pertenece al equipo
+        assertThat(equipoService.usuarioPerteneceEquipo(equipo.getId(), usuario.getId())).isFalse();
+        //Comprobamos excepciones
+        assertThatThrownBy(() -> equipoService.eliminarUsuarioDeEquipo(2L, 2L))
+                .isInstanceOf(EquipoServiceException.class);
+        assertThatThrownBy(() -> equipoService.eliminarUsuarioDeEquipo(equipo.getId(), 2L))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }

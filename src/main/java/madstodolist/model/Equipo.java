@@ -88,4 +88,11 @@ public class Equipo implements Serializable {
         this.getUsuarios().add(usuario);
         usuario.getEquipos().add(this);
     }
+
+    public void removeUsuario(Usuario usuario) {
+        // Hay que actualiar ambas colecciones, porque
+        // JPA/Hibernate no lo hace automáticamente
+        this.getUsuarios().remove(usuario);
+        usuario.getEquipos().remove(this);
+    }
 }

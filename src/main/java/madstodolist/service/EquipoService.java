@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,6 +31,11 @@ public class EquipoService {
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
+        if (nombre == null) throw new EquipoServiceException("El nombre del equipo no puede ser nulo");
+
+        Optional<Equipo> equipoDB = equipoRepository.findByNombre(nombre);
+        if (equipoDB.isPresent()) throw new EquipoServiceException("El equipo " + nombre + " ya está creado");
+
         Equipo equipo = new Equipo(nombre);
         equipoRepository.save(equipo);
         return modelMapper.map(equipo, EquipoData.class);
@@ -60,6 +66,7 @@ public class EquipoService {
         if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
         Usuario usuario = usuarioRepository.findById(id1).orElse(null);
         if (usuario == null) throw new EquipoServiceException("No existe usuario con id " + id1);
+        if (equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException("El usuario ya pertenece al equipo");
         equipo.addUsuario(usuario);
     }
 
@@ -80,5 +87,24 @@ public class EquipoService {
         return usuario.getEquipos().stream()
                 .map(equipo -> modelMapper.map(equipo, EquipoData.class))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean usuarioPerteneceEquipo(Long idEquipo, Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) throw new EquipoServiceException("No existe usuario con id " + idUsuario);
+        Equipo equipo = equipoRepository.findById(idEquipo).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + idEquipo);
+        return equipo.getUsuarios().contains(usuario);
+    }
+
+    @Transactional
+    public void eliminarUsuarioDeEquipo(Long id, Long id1) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
+        Usuario usuario = usuarioRepository.findById(id1).orElse(null);
+        if (usuario == null) throw new EquipoServiceException("No existe usuario con id " + id1);
+        if (!equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException("El usuario no pertenece al equipo");
+        equipo.removeUsuario(usuario);
     }
 }
