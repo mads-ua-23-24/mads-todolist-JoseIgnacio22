@@ -13,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Map;
-
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
@@ -68,7 +66,7 @@ public class EquipoWebTest {
     @Test
     public void detalleEquipoMuestraInformacionCorrecta() throws Exception {
         // GIVEN
-        // Dos usuarios en la base de datos
+        // Un usuario en la base de datos
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
         usuario.setPassword("123");
@@ -95,5 +93,34 @@ public class EquipoWebTest {
                         containsString("<th>Correo</th>"),
                         containsString(usuario.getEmail())
                 )));
+    }
+
+    @Test
+    public void getNuevoEquipoDevuelveForm() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        // WHEN, THEN
+        // si ejecutamos una petición GET para crear un nuevo equipo,
+        // el HTML resultante contiene un formulario y la ruta con
+        // la acción para crear el nuevo equipo.
+
+        String urlPeticion = "/equipos/nuevo";
+        String urlAction = "action=\"/equipos/nuevo\"";
+
+        this.mockMvc.perform(get(urlPeticion))
+                .andExpect((content().string(allOf(
+                        containsString("form method=\"post\""),
+                        containsString(urlAction)
+                ))));
     }
 }
