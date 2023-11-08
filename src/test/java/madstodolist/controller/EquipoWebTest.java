@@ -17,7 +17,8 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -122,5 +123,39 @@ public class EquipoWebTest {
                         containsString("form method=\"post\""),
                         containsString(urlAction)
                 ))));
+    }
+
+    @Test
+    public void postNuevoEquipoDevuelveRedirectYAñadeEquipo() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        // WHEN, THEN
+        // realizamos la petición POST para añadir un equipo,
+        // el estado HTTP que se devuelve es un REDIRECT al listado
+        // de equipos.
+
+        String urlPost = "/equipos/nuevo";
+        String urlRedirect = "/equipos";
+
+        this.mockMvc.perform(post(urlPost)
+                        .param("nombre", "Equipo 1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // y si después consultamos el listado de equipos con una petición
+        // GET el HTML contiene el equipo añadido.
+
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect((content().string(containsString("Equipo 1"))));
     }
 }
