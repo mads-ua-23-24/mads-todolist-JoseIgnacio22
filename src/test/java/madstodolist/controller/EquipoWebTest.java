@@ -160,7 +160,7 @@ public class EquipoWebTest {
     }
 
     @Test
-    public void postNuevoEquipoDevuelveRedirectAFormEIndicaError() throws Exception {
+    public void postNuevoEquipoExistenteIndicaError() throws Exception {
         // GIVEN
         // Un usuario en la BD
         UsuarioData usuario = new UsuarioData();
@@ -177,8 +177,8 @@ public class EquipoWebTest {
 
         // WHEN, THEN
         // realizamos la petición POST para añadir un equipo,
-        // el estado HTTP que se devuelve es un REDIRECT al form
-        // de crear equipo e indica error.
+        // el estado HTTP que se devuelve es OK y el HTML contiene
+        // un mensaje de error.
 
         String urlPost = "/equipos/nuevo";
 
