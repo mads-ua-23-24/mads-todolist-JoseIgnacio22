@@ -158,4 +158,37 @@ public class EquipoWebTest {
         this.mockMvc.perform(get(urlRedirect))
                 .andExpect((content().string(containsString("Equipo 1"))));
     }
+
+    @Test
+    public void postNuevoEquipoDevuelveRedirectAFormEIndicaError() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y un equipo en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        // WHEN, THEN
+        // realizamos la petición POST para añadir un equipo,
+        // el estado HTTP que se devuelve es un REDIRECT al form
+        // de crear equipo e indica error.
+
+        String urlPost = "/equipos/nuevo";
+
+        this.mockMvc.perform(post(urlPost)
+                        .param("nombre", "Proyecto P1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(allOf(
+                        containsString("form method=\"post\""),
+                        containsString("action=\"/equipos/nuevo\""),
+                        containsString("Equipo ya existente")
+                )));
+    }
 }

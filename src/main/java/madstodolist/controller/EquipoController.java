@@ -83,8 +83,12 @@ public class EquipoController {
                              HttpSession session) {
 
         Long idUsuarioLogeado = comprobarUsuarioLogeado();
-
-        equipoService.crearEquipo(equipoData.getNombre());
+        try{
+            equipoService.crearEquipo(equipoData.getNombre());
+        } catch (Exception e) {
+            model.addAttribute("error", "Equipo ya existente");
+            return "formNuevoEquipo";
+        }
         flash.addFlashAttribute("mensaje", "Equipo creado correctamente");
         return "redirect:/equipos";
     }
