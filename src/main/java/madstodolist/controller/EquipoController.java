@@ -47,6 +47,7 @@ public class EquipoController {
 
         model.addAttribute("logeado", usuario);
         model.addAttribute("equipos", equipos);
+        model.addAttribute("equipoService", equipoService);
 
         return "listaEquipos";
     }

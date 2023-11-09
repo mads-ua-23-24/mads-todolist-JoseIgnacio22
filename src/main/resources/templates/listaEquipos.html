@@ -22,6 +22,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
+                    <th>Acción</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,6 +31,8 @@
                     <td>
                         <a style="text-decoration: underline;" th:href="@{'/equipos/' + ${equipo.id}}" th:text="${equipo.nombre}"></a>
                     </td>
+                    <td th:if="${!equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-primary btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/unirse'}"/>Unirse</a></td>
+                    <td th:if="${equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-danger btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/salirse'}"/>Salirse</a></td>
                 </tr>
                 </tbody>
             </table>
