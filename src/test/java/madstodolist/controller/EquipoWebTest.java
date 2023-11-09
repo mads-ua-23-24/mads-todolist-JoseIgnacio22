@@ -248,4 +248,26 @@ public class EquipoWebTest {
                         not(containsString("Unirse"))
                 )));
     }
+
+    @Test
+    public void muestraBotónAñadirEquipo() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        String url = "/equipos";
+
+        // THEN
+        this.mockMvc.perform(get(url))
+                .andExpect(content().string(allOf(
+                        containsString("<p><a class=\"btn btn-primary\" href=\"/equipos/nuevo\"> Crear equipo</a></p>")
+                )));
+    }
 }
