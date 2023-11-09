@@ -1,6 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.OperacionNoPermitidaException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
@@ -91,6 +92,16 @@ public class EquipoController {
             return "formNuevoEquipo";
         }
         flash.addFlashAttribute("mensaje", "Equipo creado correctamente");
+        return "redirect:/equipos";
+    }
+
+    @GetMapping("/equipos/{id}/unirse")
+    public String unirseAEquipo(Model model, @PathVariable(value="id") Long idEquipo) {
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+
+        equipoService.añadirUsuarioAEquipo(idEquipo, idUsuarioLogeado);
+
+
         return "redirect:/equipos";
     }
 }

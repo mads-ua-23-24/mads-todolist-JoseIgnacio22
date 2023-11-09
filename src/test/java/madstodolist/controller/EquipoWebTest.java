@@ -1,6 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.OperacionNoPermitidaException;
 import madstodolist.dto.EquipoData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
@@ -12,11 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -269,5 +272,39 @@ public class EquipoWebTest {
                 .andExpect(content().string(allOf(
                         containsString("<p><a class=\"btn btn-primary\" href=\"/equipos/nuevo\"> Crear equipo</a></p>")
                 )));
+    }
+
+    @Test
+    public void unirseRedirectYCorrecto() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y un equipo en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        // WHEN, THEN
+        // realizamos la petición GET para unirse,
+        // el estado HTTP que se devuelve es REDIRECT,
+
+        String url = "/equipos/" + equipo.getId() + "/unirse";
+        String urlRedirect = "/equipos";
+
+        this.mockMvc.perform(get(url))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // y cuando se pide el listado de equipos, aparece salirse.
+
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect(content().string(
+                        allOf(not(containsString("Unirse")),
+                                containsString("Salirse"))));
     }
 }
