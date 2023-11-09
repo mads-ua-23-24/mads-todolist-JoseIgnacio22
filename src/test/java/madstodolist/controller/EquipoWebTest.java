@@ -307,4 +307,40 @@ public class EquipoWebTest {
                         allOf(not(containsString("Unirse")),
                                 containsString("Salirse"))));
     }
+
+    @Test
+    public void salirseRedirectYCorrecto() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y un equipo en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+        // Y el usuario pertenece al equipo
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        // WHEN, THEN
+        // realizamos la petición GET para salirse,
+        // el estado HTTP que se devuelve es REDIRECT,
+
+        String url = "/equipos/" + equipo.getId() + "/salirse";
+        String urlRedirect = "/equipos";
+
+        this.mockMvc.perform(get(url))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // y cuando se pide el listado de equipos, aparece unirse.
+
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect(content().string(
+                        allOf(not(containsString("Salirse")),
+                                containsString("Unirse"))));
+    }
 }

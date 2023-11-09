@@ -104,4 +104,14 @@ public class EquipoController {
 
         return "redirect:/equipos";
     }
+
+    @GetMapping("/equipos/{id}/salirse")
+    public String salirseAEquipo(Model model, @PathVariable(value="id") Long idEquipo) {
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+
+        equipoService.eliminarUsuarioDeEquipo(idEquipo, idUsuarioLogeado);
+
+
+        return "redirect:/equipos";
+    }
 }
