@@ -112,4 +112,10 @@ public class EquipoService {
         if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
         equipoRepository.delete(equipo);
     }
+
+    @Transactional
+    public void eliminarUsuariosDeEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        equipo.getUsuarios().clear();
+    }
 }
