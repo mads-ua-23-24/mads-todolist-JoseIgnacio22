@@ -105,4 +105,10 @@ public class EquipoService {
         if (!equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException("El usuario no pertenece al equipo");
         equipo.removeUsuario(usuario);
     }
+
+    @Transactional
+    public void eliminarEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        equipoRepository.delete(equipo);
+    }
 }
