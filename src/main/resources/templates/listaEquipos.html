@@ -22,17 +22,31 @@
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
+                    <th>Acción</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="equipo: ${equipos}">
                     <td th:text="${equipo.id}"></td>
                     <td>
-                        <a style="text-decoration: underline;" th:href="@{'/equipo/' + ${equipo.id}}" th:text="${equipo.nombre}"></a>
+                        <a style="text-decoration: underline;" th:href="@{'/equipos/' + ${equipo.id}}" th:text="${equipo.nombre}"></a>
                     </td>
+                    <td th:if="${!equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-primary btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/unirse'}"/>Unirse</a></td>
+                    <td th:if="${equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-danger btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/salirse'}"/>Salirse</a></td>
                 </tr>
                 </tbody>
             </table>
+            <p><a class="btn btn-primary" th:href="@{/equipos/nuevo}"> Crear equipo</a></p>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
