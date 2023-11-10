@@ -247,4 +247,15 @@ public class EquipoServiceTest {
         assertThat(equipoService.usuarioPerteneceEquipo(equipo.getId(), usuario.getId())).isFalse();
         assertThat(equipoService.usuarioPerteneceEquipo(equipo.getId(), usuario1.getId())).isFalse();
     }
+
+    @Test
+    public void eliminarUsuariosDeEquipoLanzaExcepción(){
+        // GIVEN
+        // Equipo inexistente
+        Long id = 1L;
+        //WHEN, THEN
+        //Comprobamos la excepción
+        assertThatThrownBy(() -> equipoService.eliminarUsuariosDeEquipo(id))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
