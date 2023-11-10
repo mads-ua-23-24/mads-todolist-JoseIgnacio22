@@ -126,4 +126,18 @@ public class EquipoController {
         equipoService.eliminarEquipo(idEquipo);
         return "";
     }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String grabaEquipoModificado(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                                        Model model, RedirectAttributes flash, HttpSession session) {
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+
+        if (!usuario.getAdmin())
+            throw new OperacionNoPermitidaException();
+
+        equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+        flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
+        return "redirect:/equipos";
+    }
 }

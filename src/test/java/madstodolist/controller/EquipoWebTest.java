@@ -320,4 +320,40 @@ public class EquipoWebTest {
                 .andExpect(content().string(
                         allOf(not(containsString("Proyecto P1")))));
     }
+
+    @Test
+    public void postEditarEquipo() throws Exception{
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setAdmin(true);
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y un equipo en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        // WHEN, THEN
+        // realizamos la petición POST para editar el equipo,
+        // el estado HTTP que se devuelve es OK,
+
+        String url = "/equipos/" + equipo.getId() + "/editar";
+        String urlRedirect = "/equipos";
+
+        this.mockMvc.perform(post(url)
+                        .param("nombre", "Proyecto P2"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // y cuando se pide el listado de equipos, aparece el equipo editado.
+
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect(content().string(
+                        allOf(not(containsString("Proyecto P1")),
+                                containsString("Proyecto P2"))));
+    }
 }
