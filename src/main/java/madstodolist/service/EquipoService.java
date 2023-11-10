@@ -123,6 +123,8 @@ public class EquipoService {
     @Transactional
     public void editarEquipo(Long id, String s) {
         Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
+        else if(equipoRepository.findByNombre(s).isPresent()) throw new EquipoServiceException("Ya existe un equipo con ese nombre");
         equipo.setNombre(s);
     }
 }

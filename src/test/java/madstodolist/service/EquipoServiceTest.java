@@ -271,4 +271,22 @@ public class EquipoServiceTest {
         //Comprobamos que el nombre del equipo ha cambiado
         assertThat(equipoService.recuperarEquipo(equipo.getId()).getNombre()).isEqualTo("Proyecto 2");
     }
+
+    @Test
+    public void editarEquipoLanzaExcepción(){
+        // GIVEN
+        // Un equipo en la bd
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        // Un equipo con el mismo nombre
+        equipoService.crearEquipo("Proyecto 2");
+        // Equipo inexistente
+        Long id = 1L;
+
+        //WHEN, THEN
+        //Comprobamos la excepción
+        assertThatThrownBy(() -> equipoService.editarEquipo(id, "Proyecto 2"))
+                .isInstanceOf(EquipoServiceException.class);
+        assertThatThrownBy(() -> equipoService.editarEquipo(equipo.getId(), "Proyecto 2"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
