@@ -99,6 +99,19 @@ Y en la plantilla ```listaEquipos.html``` utilizamos la función ```usuarioPerte
         <td th:if="${equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-danger btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/salirse'}"/>Salirse</a></td>
     </tr>
 ```
+#### Refactorización de código:
+- Método ```comprobarUsuarioLogeado()``` en ```EquipoController.java```:
+```java
+    private Long comprobarUsuarioLogeado() {
+        Long idUsuarioLogeado = (Long) session.getAttribute("idUsuarioLogeado");
+        if (idUsuarioLogeado == null) throw new EquipoWebException("No hay ningún usuario logeado");
+        return idUsuarioLogeado;
+    }
+```
+- Ampliación en tests ```EquipoWebTest.java```:
+   - Commits: 
+     - De [39e7f0d](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/39e7f0de29f1ebd34d65071ba91c5962002ad2c2) se añaden en [25b9650](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/25b96503963bb9bfa99502965ca996726e21c385) y en [3769e6e](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/3769e6e8cffe5be90e70101058d00ae242d9e420)
+     - Se eliminan en [a9fb368](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/a9fb36838180fae9db652c4a585d6c8bd41e2ff1) 
 
 ## Repositorio GitHub
 
