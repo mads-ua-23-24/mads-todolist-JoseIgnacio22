@@ -211,4 +211,15 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.recuperarEquipo(equipo.getId()))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void eliminarEquipoLanzaExcepción() {
+        // GIVEN
+        // Equipo inexistente
+        Long id = 1L;
+        //WHEN, THEN
+        //Comprobamos la excepción
+        assertThatThrownBy(() -> equipoService.eliminarEquipo(id))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
