@@ -9,10 +9,11 @@
 
 #### Listado de nuevas clases y métodos implementados:
 
-- **Listado de equipos. Capa interna.** Se ha añadido nuevo módelo ```Equipo.java```, nuevo repositorio ```EquipoRepository```, nuevo método ```getEquipos()``` en ```Usuario.java```, nueva clase ```EquipoData.java```, nueva clase servicio ```EquipoService()``` y nueva clase de excepción ```EquipoServiceException()```. Extra: añadido método ```findAllByOrderByNombreAsc()``` en ```EquipoRepository.java```.
+- **Listado de equipos. Capa interna.** Se ha añadido nuevo módelo ```Equipo.java```, nuevo repositorio ```EquipoRepository```, nuevo método ```getEquipos()``` en ```Usuario.java```, nueva clase ```EquipoData.java```, nueva clase servicio ```EquipoService.java``` y nueva clase de excepción ```EquipoServiceException()```. Extra: añadido método ```findAllByOrderByNombreAsc()``` en ```EquipoRepository.java```.
 - **Listado de equipos. Capa externa.** Se ha añadido nuevo controller ```EquipoController.java``` con los métodos ```listadoEquipos```y ```detalleEquipo```.
 - **Gestionar pertenencia al equipo. Capa interna.** Se ha añadido nuevo método ```findByNombre(nombre)``` en ```EquipoRepository.java```, nuevo método ```removeUsuario(usuario)``` en ```Equipo.java``` y nuevo métodos: ```usuarioPerteneceEquipo(id, id)```, ```eliminarUsuarioDeEquipo(id,id)``` en ```EquipoService.java```.
 - **Gestionar pertenencia al equipo. Capa externa.** Se ha añadido nuevos métodos ```formNuevoEquipo```, ```nuevoEquipo```, ```unirseAEquipo``` y ```salirseAEquipo``` en ```EquipoController.java```.
+- **Gestión de equipo. Capa interna.** Se han añadido nuevos métodos: ```eliminarEquipo(id)```, ```eliminarUsuariosDeEquipo(id)``` y ```editarEquipo(id, nombre)``` en ```EquipoService.java```.
 
 #### Listado de plantillas thyemeleaf añadidas:
 - **Listado de equipos.** Se ha añadido nueva plantilla ```listaEquipos.html```, se ha modificado ```fragments.html``` con ruta a ```/equipos``` y nueva plantilla ```descripcionEquipo.html```.
@@ -23,6 +24,7 @@
 - **Listado de equipos. Capa externa.** Nueva clase test ```EquipoWebTest.java``` con los métodos ```listaEquipos()```, ```detalleEquipoMuestraInformacionCorrecta()```, . Nuevo método ```barraMenuContieneEquipos()``` en ```BarraWebTest.java```.
 - **Gestionar pertenencia al equipo. Capa interna.** Se han añadido nuevos métodos: ```crearEquipoExcepciones()```, ```añadirUsuarioAEquipoYaUnidoExcepcion()```, ```usuarioPerteneceEquipo()``` y ```eliminarUsuarioDeEquipo()```   en ```EquipoServiceTest.java```.
 - **Gestionar pertenencia al equipo. Capa Externa.** Se han añadido nuevos métodos: ```getNuevoEquipoDevuelveForm()```, ```postNuevoEquipoDevuelveRedirectYAñadeEquipo()```, ```postNuevoEquipoExistenteIndicaError()```, ```muestraBotónAñadirEquipo()```, ```unirseRedirectYCorrecto()``` y ```salirseRedirectYCorrecto()``` en ```EquipoWebTest.java```.
+- **Gestión de equipo. Capa interna.** Se han añadido nuevos métodos: ```eliminarEquipo()```, ```eliminarEquipoLanzaExcepción()```, ```eliminarUsuariosDeEquipo()```, ```eliminarUsuariosDeEquipoLanzaExcepción()```, ```editarEquipo()``` y ```editarEquipoLanzaExcepción()``` en ```EquipoServiceTest.java```.
 
 #### Código fuente relevante:
 - En el método ```findAllOrdenadoPorNombre()``` de la clase servicio ```EquipoService.java``` utilzamos un nuevo método repositorio ```findAllByOrderByNombreAsc()```:

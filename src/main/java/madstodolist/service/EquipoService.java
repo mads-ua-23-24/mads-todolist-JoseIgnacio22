@@ -105,4 +105,26 @@ public class EquipoService {
         if (!equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException("El usuario no pertenece al equipo");
         equipo.removeUsuario(usuario);
     }
+
+    @Transactional
+    public void eliminarEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
+        equipoRepository.delete(equipo);
+    }
+
+    @Transactional
+    public void eliminarUsuariosDeEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
+        equipo.getUsuarios().clear();
+    }
+
+    @Transactional
+    public void editarEquipo(Long id, String s) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
+        else if(equipoRepository.findByNombre(s).isPresent()) throw new EquipoServiceException("Ya existe un equipo con ese nombre");
+        equipo.setNombre(s);
+    }
 }
