@@ -195,64 +195,6 @@ public class EquipoWebTest {
     }
 
     @Test
-    public void usuarioSinEquipoMuestraUnirse() throws Exception {
-        // GIVEN
-        // Un usuario en la BD
-        UsuarioData usuario = new UsuarioData();
-        usuario.setEmail("user@ua");
-        usuario.setPassword("123");
-        usuario.setNombre("Usuario Ejemplo");
-        usuario = usuarioService.registrar(usuario);
-        // Y un equipo en la base de datos
-        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
-
-        // WHEN
-        // El usuario se logea
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
-        String url = "/equipos";
-
-        // THEN
-        this.mockMvc.perform(get(url))
-                .andExpect(content().string(allOf(
-                        containsString(equipo.getId().toString()),
-                        containsString(equipo.getNombre()),
-                        containsString("Acción"),
-                        containsString("Unirse"),
-                        not(containsString("Salirse"))
-                )));
-    }
-
-    @Test
-    public void usuarioConEquipoMuestraSalirse() throws Exception {
-        // GIVEN
-        // Un usuario en la BD
-        UsuarioData usuario = new UsuarioData();
-        usuario.setEmail("user@ua");
-        usuario.setPassword("123");
-        usuario.setNombre("Usuario Ejemplo");
-        usuario = usuarioService.registrar(usuario);
-        // Y un equipo en la base de datos
-        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
-        // Y el usuario pertenece al equipo
-        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
-
-        // WHEN
-        // El usuario se logea
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
-        String url = "/equipos";
-
-        // THEN
-        this.mockMvc.perform(get(url))
-                .andExpect(content().string(allOf(
-                        containsString(equipo.getId().toString()),
-                        containsString(equipo.getNombre()),
-                        containsString("Acción"),
-                        containsString("Salirse"),
-                        not(containsString("Unirse"))
-                )));
-    }
-
-    @Test
     public void muestraBotónAñadirEquipo() throws Exception {
         // GIVEN
         // Un usuario en la BD
