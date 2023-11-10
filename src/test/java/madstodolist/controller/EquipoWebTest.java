@@ -356,4 +356,34 @@ public class EquipoWebTest {
                         allOf(not(containsString("Proyecto P1")),
                                 containsString("Proyecto P2"))));
     }
+
+    @Test
+    public void getEditarEquipo() throws Exception{
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario.setAdmin(true);
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y un equipo en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        // WHEN, THEN
+        // realizamos la petición GET para editar el equipo,
+        // el estado HTTP que se devuelve es OK,
+
+        String url = "/equipos/" + equipo.getId() + "/editar";
+
+        this.mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        allOf(containsString("form method=\"post\""),
+                                containsString("action=\"/equipos/" + equipo.getId() + "/editar\""),
+                                containsString("value=\"" + equipo.getNombre() + "\""))));
+    }
 }

@@ -140,4 +140,21 @@ public class EquipoController {
         flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
         return "redirect:/equipos";
     }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditaEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                                  Model model, HttpSession session) {
+
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+
+        if (!usuario.getAdmin())
+            throw new OperacionNoPermitidaException();
+
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        model.addAttribute("logeado", usuario);
+        model.addAttribute("equipo", equipo);
+        equipoData.setNombre(equipo.getNombre());
+        return "formEditarEquipo";
+    }
 }
