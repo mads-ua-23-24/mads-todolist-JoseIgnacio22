@@ -1,9 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.controller.exception.OperacionNoPermitidaException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
-import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.dto.EquipoData;
 import madstodolist.service.EquipoService;
@@ -68,7 +66,7 @@ public class EquipoController {
     }
 
     @GetMapping("/equipos/nuevo")
-    public String formNuevaTarea(@ModelAttribute EquipoData equipoData, Model model,
+    public String formNuevoEquipo(@ModelAttribute EquipoData equipoData, Model model,
                                  HttpSession session) {
 
         Long idUsuarioLogeado = comprobarUsuarioLogeado();
@@ -80,7 +78,7 @@ public class EquipoController {
     }
 
     @PostMapping("/equipos/nuevo")
-    public String nuevaTarea(@ModelAttribute EquipoData equipoData,
+    public String nuevoEquipo(@ModelAttribute EquipoData equipoData,
                              Model model, RedirectAttributes flash,
                              HttpSession session) {
 
