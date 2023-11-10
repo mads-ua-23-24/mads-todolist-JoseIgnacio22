@@ -119,4 +119,10 @@ public class EquipoService {
         if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
         equipo.getUsuarios().clear();
     }
+
+    @Transactional
+    public void editarEquipo(Long id, String s) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        equipo.setNombre(s);
+    }
 }
