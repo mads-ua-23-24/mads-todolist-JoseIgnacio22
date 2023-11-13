@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.OperacionNoPermitidaException;
 import madstodolist.dto.EquipoData;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -385,5 +387,34 @@ public class EquipoWebTest {
                         allOf(containsString("form method=\"post\""),
                                 containsString("action=\"/equipos/" + equipo.getId() + "/editar\""),
                                 containsString("value=\"" + equipo.getNombre() + "\""))));
+    }
+
+    @Test
+    public void listaEquiposMuestraBotonesAdministrador() throws Exception{
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("admin@ua");
+        usuario.setPassword("123");
+        usuario.setAdmin(true);
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y dos equipos en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        // THEN
+        // El usuario puede ver la lista de equipos
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(allOf(
+                        containsString("Gestión"),
+                        containsString("<a class=\"btn btn-warning btn-xs\" href=\"/equipos/1/editar\"/>Editar</a>"),
+                        containsString("<button class=\"btn btn-danger btn-xs\" onmouseover=\"\" style=\"cursor: pointer;\""),
+                        containsString("onclick=\"del(&#39;/equipos/1&#39;)\">Borrar</button>")
+
+                )));
     }
 }
