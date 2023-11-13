@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -124,7 +125,7 @@ public class EquipoService {
     public void editarEquipo(Long id, String s) {
         Equipo equipo = equipoRepository.findById(id).orElse(null);
         if (equipo == null) throw new EquipoServiceException("No existe equipo con id " + id);
-        else if(equipoRepository.findByNombre(s).isPresent()) throw new EquipoServiceException("Ya existe un equipo con ese nombre");
+        else if(equipoRepository.findByNombre(s).isPresent() && !Objects.equals(equipo.getNombre(), s)) throw new EquipoServiceException("Ya existe un equipo con ese nombre");
         equipo.setNombre(s);
     }
 }

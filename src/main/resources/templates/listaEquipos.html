@@ -23,6 +23,7 @@
                     <th>Id</th>
                     <th>Nombre</th>
                     <th>Acción</th>
+                    <th th:if="${logeado.admin}">Gestión</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,11 @@
                     </td>
                     <td th:if="${!equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-primary btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/unirse'}"/>Unirse</a></td>
                     <td th:if="${equipoService.usuarioPerteneceEquipo(equipo.id,logeado.id)}"><a class="btn btn-danger btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/salirse'}"/>Salirse</a></td>
+                    <td th:if="${logeado.admin}">
+                        <a class="btn btn-warning btn-xs" th:href="@{'/equipos/' + ${equipo.id} + '/editar'}"/>Editar</a>
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Borrar</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -53,6 +59,17 @@
 
 <div th:replace="fragments::javascript"/>
 
+<!-- Lanzamos una petición DELETE por JavaScript para borrar un equipo -->
+
+<script type="text/javascript">
+    function del(urlBorrar) {
+        if (confirm('¿Estás seguro/a de que quieres borrar el equipo?')) {
+            fetch(urlBorrar, {
+                method: 'DELETE'
+            }).then((res) => location.reload());
+        }
+    }
+</script>
 
 </body>
 </html>

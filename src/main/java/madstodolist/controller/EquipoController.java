@@ -1,7 +1,10 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.OperacionNoPermitidaException;
+import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
+import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.dto.EquipoData;
 import madstodolist.service.EquipoService;
@@ -9,10 +12,7 @@ import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -86,6 +86,8 @@ public class EquipoController {
         try{
             equipoService.crearEquipo(equipoData.getNombre());
         } catch (Exception e) {
+            UsuarioData usuarioLogeado = usuarioService.findById(idUsuarioLogeado);
+            model.addAttribute("logeado", usuarioLogeado);
             model.addAttribute("error", "Equipo ya existente");
             return "formNuevoEquipo";
         }
@@ -111,5 +113,57 @@ public class EquipoController {
 
 
         return "redirect:/equipos";
+    }
+
+    @DeleteMapping("/equipos/{id}")
+    @ResponseBody
+    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo, RedirectAttributes flash, HttpSession session) {
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+
+        if (!usuario.getAdmin())
+            throw new OperacionNoPermitidaException();
+
+        equipoService.eliminarUsuariosDeEquipo(idEquipo);
+        equipoService.eliminarEquipo(idEquipo);
+        return "";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String grabaEquipoModificado(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                                        Model model, RedirectAttributes flash, HttpSession session) {
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+
+        if (!usuario.getAdmin())
+            throw new OperacionNoPermitidaException();
+
+        try{
+            equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+        } catch (Exception e) {
+            model.addAttribute("equipo", equipoService.recuperarEquipo(idEquipo));
+            model.addAttribute("logeado", usuario);
+            model.addAttribute("error", "Equipo ya existente");
+            return "formEditarEquipo";
+        }
+        flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
+        return "redirect:/equipos";
+    }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditaEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                                  Model model, HttpSession session) {
+
+        Long idUsuarioLogeado = comprobarUsuarioLogeado();
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+
+        if (!usuario.getAdmin())
+            throw new OperacionNoPermitidaException();
+
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        model.addAttribute("logeado", usuario);
+        model.addAttribute("equipo", equipo);
+        equipoData.setNombre(equipo.getNombre());
+        return "formEditarEquipo";
     }
 }
