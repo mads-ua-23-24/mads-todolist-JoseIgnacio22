@@ -118,6 +118,17 @@ Y en la plantilla ```listaEquipos.html``` utilizamos la función ```usuarioPerte
      - De [39e7f0d](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/39e7f0de29f1ebd34d65071ba91c5962002ad2c2) se añaden en [25b9650](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/25b96503963bb9bfa99502965ca996726e21c385) y en [3769e6e](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/3769e6e8cffe5be90e70101058d00ae242d9e420)
      - Se eliminan en [a9fb368](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22/commit/a9fb36838180fae9db652c4a585d6c8bd41e2ff1) 
 
+#### Pantalla de la base de datos PostgreSQL:
+![Pantalla del panel de la base de datos PostgreSQL](./img/panel.png)
+
+![Pantalla de los usuarios](./img/usuarios.png)
+
+![Pantalla de los equipos](./img/equipos.png)
+
+![Pantalla de los usuarios en los equipos](./img/usuarios-equipos.png)
+
+![Pantalla de las tareas](./img/tareas.png)
+
 ## Repositorio GitHub
 
 El repositorio de la práctica está en: [GitHub](https://github.com/mads-ua-23-24/mads-todolist-JoseIgnacio22)
