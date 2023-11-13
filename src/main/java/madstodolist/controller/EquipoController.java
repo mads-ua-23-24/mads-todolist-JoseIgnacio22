@@ -86,6 +86,8 @@ public class EquipoController {
         try{
             equipoService.crearEquipo(equipoData.getNombre());
         } catch (Exception e) {
+            UsuarioData usuarioLogeado = usuarioService.findById(idUsuarioLogeado);
+            model.addAttribute("logeado", usuarioLogeado);
             model.addAttribute("error", "Equipo ya existente");
             return "formNuevoEquipo";
         }
@@ -136,7 +138,14 @@ public class EquipoController {
         if (!usuario.getAdmin())
             throw new OperacionNoPermitidaException();
 
-        equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+        try{
+            equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+        } catch (Exception e) {
+            model.addAttribute("equipo", equipoService.recuperarEquipo(idEquipo));
+            model.addAttribute("logeado", usuario);
+            model.addAttribute("error", "Equipo ya existente");
+            return "formEditarEquipo";
+        }
         flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
         return "redirect:/equipos";
     }

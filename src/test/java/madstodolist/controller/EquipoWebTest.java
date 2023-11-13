@@ -411,10 +411,45 @@ public class EquipoWebTest {
         this.mockMvc.perform(get("/equipos"))
                 .andExpect(content().string(allOf(
                         containsString("Gestión"),
-                        containsString("<a class=\"btn btn-warning btn-xs\" href=\"/equipos/1/editar\"/>Editar</a>"),
+                        containsString("<a class=\"btn btn-warning btn-xs\" href=\"/equipos/" + equipo.getId() + "/editar\"/>Editar</a>"),
                         containsString("<button class=\"btn btn-danger btn-xs\" onmouseover=\"\" style=\"cursor: pointer;\""),
-                        containsString("onclick=\"del(&#39;/equipos/1&#39;)\">Borrar</button>")
+                        containsString("onclick=\"del(&#39;/equipos/" + equipo.getId() + "&#39;)\">Borrar</button>")
 
+                )));
+    }
+
+    @Test
+    public void postEditarEquipoExistenteIndicaError() throws Exception {
+        // GIVEN
+        // Un usuario en la BD
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("admin@ua");
+        usuario.setPassword("123");
+        usuario.setAdmin(true);
+        usuario.setNombre("Usuario Ejemplo");
+        usuario = usuarioService.registrar(usuario);
+        // Y dos equipos en la base de datos
+        EquipoData equipo = equipoService.crearEquipo("Proyecto P1");
+        EquipoData equipo2 = equipoService.crearEquipo("Proyecto P2");
+
+        // WHEN
+        // El usuario se logea
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        // WHEN, THEN
+        // realizamos la petición POST para añadir un equipo,
+        // el estado HTTP que se devuelve es OK y el HTML contiene
+        // un mensaje de error.
+
+        String url = "/equipos/" + equipo.getId() + "/editar";
+
+        this.mockMvc.perform(post(url)
+                        .param("nombre", equipo2.getNombre()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(allOf(
+                        containsString("form method=\"post\""),
+                        containsString("action=\"" + url + "\""),
+                        containsString("Equipo ya existente")
                 )));
     }
 }
